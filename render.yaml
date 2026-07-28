@@ -1,61 +1,59 @@
-# Render Blueprint (https://render.com/docs/blueprint-spec)
-#
-# Notes before deploying:
-#   - Render's default web service disk is ephemeral. The SQLite database,
-#     ChromaDB store, uploaded PDFs, extracted images, and trained model
-#     files will be wiped on every deploy/restart unless a Render Persistent
-#     Disk is attached at /app/data (requested below via `disk:`). Confirm
-#     your plan supports persistent disks before relying on this.
-#   - The embedding model (and reranker, if enabled) download from Hugging
-#     Face on first request and use real memory; a starter-tier instance is
-#     likely too small once TensorFlow is also loaded -- size up if needed.
-#   - Review and adjust the values below before deploying to a real
-#     environment; this is a starting configuration, not a finished one.
-
 services:
   - type: web
     name: ai-research-knowledge-assistant
     runtime: docker
     dockerfilePath: ./Dockerfile
-    plan: standard  # starter (512MB) is likely too small once TensorFlow + embeddings are loaded
+    plan: free
     region: oregon
     branch: main
     healthCheckPath: /health
     autoDeploy: false
-    disk:
-      name: ai-research-assistant-data
-      mountPath: /app/data
-      sizeGB: 5
+
     envVars:
       - key: APP_ENV
         value: production
+
       - key: DEBUG
         value: "false"
+
       - key: DATABASE_URL
         value: sqlite:////app/data/app.db
+
       - key: UPLOAD_DIR
         value: /app/data/raw_documents
+
       - key: VECTOR_DB_DIR
         value: /app/data/vector_db
+
       - key: IMAGES_DIR
         value: /app/data/extracted_images
+
       - key: MODEL_PATH
-        value: /app/data/models/document_classifier.keras
+        value: /app/models/document_classifier.keras
+
       - key: VECTORIZER_PATH
-        value: /app/data/models/text_vectorizer.pkl
+        value: /app/models/text_vectorizer.pkl
+
       - key: LABEL_ENCODER_PATH
-        value: /app/data/models/label_encoder.pkl
+        value: /app/models/label_encoder.pkl
+
       - key: GEMINI_API_KEY
-        sync: false  # set manually in the Render dashboard -- never commit real keys here
+        sync: false
+
       - key: JWT_SECRET_KEY
-        generateValue: true  # Render generates and stores a random secret for you
+        generateValue: true
+
       - key: JWT_ALGORITHM
         value: HS256
+
       - key: JWT_ACCESS_TOKEN_EXPIRE_MINUTES
         value: "60"
+
       - key: OCR_ENABLED
         value: "true"
+
       - key: CACHE_BACKEND
-        value: memory  # set to "redis" + REDIS_URL if you add a separate Render Redis instance
+        value: memory
+
       - key: STREAMING_ENABLED
         value: "true"
