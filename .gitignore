@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+
+# Environment
+.env
+
+# Data & models (generated at runtime / training time)
+data/raw_documents/*
+!data/raw_documents/.gitkeep
+data/vector_db/*
+!data/vector_db/.gitkeep
+data/app.db
+
+# Generated OCR images
+data/extracted_images/
+
+# Trained model artifacts (models/*.keras, *.pkl) are intentionally NOT
+# ignored -- they're checked in so the repo is runnable without retraining.
+
+# Synthetic dataset (optional, generated)
+data/dataset/document_classification_synthetic.csv
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

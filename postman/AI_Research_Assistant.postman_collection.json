@@ -1,0 +1,278 @@
+{
+  "info": {
+    "name": "AI Research & Knowledge Assistant",
+    "description": "Full API collection including authentication, multi-user documents, hybrid search, reranking, streaming, the research agent, and admin endpoints. Register or login first (Auth folder) -- the access_token is saved automatically into the collection variable `access_token` and used as a Bearer token by every other request.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }]
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000/api/v1" },
+    { "key": "access_token", "value": "" },
+    { "key": "document_id", "value": "" },
+    { "key": "document_id_2", "value": "" },
+    { "key": "session_id", "value": "" },
+    { "key": "image_id", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": { "method": "GET", "url": "http://localhost:8000/health", "auth": { "type": "noauth" } }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "event": [{
+            "listen": "test",
+            "script": { "exec": [
+              "if (pm.response.code === 200) { pm.collectionVariables.set('access_token', pm.response.json().access_token); }"
+            ]}
+          }],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/register",
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"you@example.com\",\n  \"password\": \"StrongPass1!\",\n  \"display_name\": \"Your Name\"\n}" }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [{
+            "listen": "test",
+            "script": { "exec": [
+              "if (pm.response.code === 200) { pm.collectionVariables.set('access_token', pm.response.json().access_token); }"
+            ]}
+          }],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/login",
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"you@example.com\",\n  \"password\": \"StrongPass1!\"\n}" }
+          }
+        },
+        {
+          "name": "Get Current User (me)",
+          "request": { "method": "GET", "url": "{{base_url}}/auth/me" }
+        }
+      ]
+    },
+    {
+      "name": "Documents",
+      "item": [
+        {
+          "name": "Upload Document",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/documents/upload",
+            "body": { "mode": "formdata", "formdata": [{ "key": "files", "type": "file", "src": [] }] }
+          }
+        },
+        {
+          "name": "List Documents",
+          "request": { "method": "GET", "url": "{{base_url}}/documents" }
+        },
+        {
+          "name": "Get Document",
+          "request": { "method": "GET", "url": "{{base_url}}/documents/{{document_id}}" }
+        },
+        {
+          "name": "Delete Document",
+          "request": { "method": "DELETE", "url": "{{base_url}}/documents/{{document_id}}" }
+        },
+        {
+          "name": "Reprocess Document",
+          "request": { "method": "POST", "url": "{{base_url}}/documents/{{document_id}}/reprocess" }
+        },
+        {
+          "name": "Get Document Images",
+          "request": { "method": "GET", "url": "{{base_url}}/documents/{{document_id}}/images" }
+        },
+        {
+          "name": "Get Document Tables",
+          "request": { "method": "GET", "url": "{{base_url}}/documents/{{document_id}}/tables" }
+        }
+      ]
+    },
+    {
+      "name": "Search",
+      "item": [
+        {
+          "name": "Keyword Search",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/search/keyword",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"query\": \"neural network\"\n}" }
+          }
+        },
+        {
+          "name": "Semantic Search",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/search/semantic",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"query\": \"How does the model handle overfitting?\",\n  \"top_k\": 4\n}" }
+          }
+        },
+        {
+          "name": "Hybrid Search (BM25 + Vector + Reranking)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/search/hybrid",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"query\": \"elastic scaling of microservices\",\n  \"top_k\": 4,\n  \"apply_reranking\": true\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Chat (RAG)",
+      "item": [
+        {
+          "name": "Ask Question (semantic)",
+          "event": [{
+            "listen": "test",
+            "script": { "exec": [
+              "if (pm.response.code === 200) { pm.collectionVariables.set('session_id', pm.response.json().session_id); }"
+            ]}
+          }],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/chat/ask",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"question\": \"What methodology does this paper use?\",\n  \"session_id\": \"{{session_id}}\",\n  \"retrieval_mode\": \"semantic\"\n}" }
+          }
+        },
+        {
+          "name": "Ask Question (hybrid + reranking)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/chat/ask",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"question\": \"What are the key findings?\",\n  \"session_id\": \"{{session_id}}\",\n  \"retrieval_mode\": \"hybrid\",\n  \"apply_reranking\": true\n}" }
+          }
+        },
+        {
+          "name": "Stream Chat (SSE)",
+          "description": "Postman renders SSE as raw streamed text in the response body. For a real terminal demo use:\ncurl -N -X POST {{base_url}}/chat/stream -H \"Authorization: Bearer {{access_token}}\" -H \"Content-Type: application/json\" -d '{\"question\": \"What does this document say?\"}'",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/chat/stream",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"question\": \"What does this document say?\",\n  \"session_id\": \"{{session_id}}\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analysis",
+      "item": [
+        {
+          "name": "Summarize Document",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/analysis/summarize",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"document_id\": \"{{document_id}}\"\n}" }
+          }
+        },
+        {
+          "name": "Compare Documents",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/analysis/compare",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"document_ids\": [\"{{document_id}}\", \"{{document_id_2}}\"]\n}" }
+          }
+        },
+        {
+          "name": "Classify Document",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/analysis/classify",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"document_id\": \"{{document_id}}\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sessions",
+      "item": [
+        {
+          "name": "Get Session History",
+          "request": { "method": "GET", "url": "{{base_url}}/sessions/{{session_id}}" }
+        },
+        {
+          "name": "Clear Session",
+          "request": { "method": "DELETE", "url": "{{base_url}}/sessions/{{session_id}}" }
+        }
+      ]
+    },
+    {
+      "name": "Agent",
+      "item": [
+        {
+          "name": "Run Agent - list documents",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/agent/run",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"instruction\": \"list my documents\"\n}" }
+          }
+        },
+        {
+          "name": "Run Agent - answer from documents",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/agent/run",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"instruction\": \"What does this document conclude?\",\n  \"document_ids\": [\"{{document_id}}\"]\n}" }
+          }
+        },
+        {
+          "name": "Run Agent - summarize",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/agent/run",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"instruction\": \"summarize this document\",\n  \"document_ids\": [\"{{document_id}}\"]\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "item": [
+        {
+          "name": "Get My Analytics",
+          "request": { "method": "GET", "url": "{{base_url}}/analytics" }
+        }
+      ]
+    },
+    {
+      "name": "Admin (requires admin role)",
+      "item": [
+        {
+          "name": "System-Wide Analytics",
+          "request": { "method": "GET", "url": "{{base_url}}/admin/analytics" }
+        },
+        {
+          "name": "Cache Diagnostics",
+          "request": { "method": "GET", "url": "{{base_url}}/admin/cache" }
+        }
+      ]
+    }
+  ]
+}

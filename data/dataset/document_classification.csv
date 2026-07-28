@@ -1,0 +1,36 @@
+text,category
+"Deep learning models such as transformers have revolutionized artificial intelligence by enabling large-scale reasoning and language understanding.",Artificial Intelligence
+"Artificial general intelligence research explores building systems capable of performing any intellectual task a human can.",Artificial Intelligence
+"An AI agent perceives its environment and takes actions to maximize a reward signal defined by its objective function.",Artificial Intelligence
+"Knowledge representation and symbolic reasoning remain foundational pillars of classical artificial intelligence systems.",Artificial Intelligence
+"Expert systems use rule-based inference engines to emulate the decision-making ability of a human specialist.",Artificial Intelligence
+"Supervised machine learning algorithms learn a mapping from labelled input features to target outputs.",Machine Learning
+"Gradient boosting and random forests are popular ensemble methods used for structured tabular data prediction.",Machine Learning
+"Feature engineering and cross-validation are essential steps in building a robust machine learning pipeline.",Machine Learning
+"Overfitting occurs when a model learns noise in the training data rather than generalizable patterns.",Machine Learning
+"Support vector machines find an optimal hyperplane that maximizes the margin between class boundaries.",Machine Learning
+"Convolutional neural networks extract hierarchical spatial features from images for object recognition tasks.",Computer Vision
+"Image segmentation partitions a digital image into multiple regions to simplify object detection and analysis.",Computer Vision
+"Optical character recognition converts scanned document images into machine-readable text.",Computer Vision
+"Facial recognition systems use deep embeddings to compare and identify individuals from photographs.",Computer Vision
+"Object detection models like YOLO predict bounding boxes and class labels in a single forward pass.",Computer Vision
+"Natural language processing enables machines to understand, interpret, and generate human language.",Natural Language Processing
+"Named entity recognition identifies proper nouns such as people, organizations, and locations within text.",Natural Language Processing
+"Word embeddings represent words as dense vectors that capture semantic relationships between them.",Natural Language Processing
+"Sentiment analysis classifies text according to the emotional tone expressed by the author.",Natural Language Processing
+"Machine translation systems convert text from one natural language into another while preserving meaning.",Natural Language Processing
+"Autonomous robots use SLAM algorithms to simultaneously map an environment and localize themselves within it.",Robotics
+"Robotic arms rely on inverse kinematics to compute the joint angles required to reach a target position.",Robotics
+"Swarm robotics studies how large numbers of simple robots can coordinate to accomplish complex tasks.",Robotics
+"Sensor fusion combines data from cameras, lidar, and IMUs to improve a robot's perception accuracy.",Robotics
+"Humanoid robots are designed to mimic human motion and interact naturally within human environments.",Robotics
+"Penetration testing identifies exploitable vulnerabilities in an organization's network infrastructure before attackers do.",Cyber Security
+"Zero-day vulnerabilities are security flaws that are unknown to the vendor and have no available patch.",Cyber Security
+"Multi-factor authentication significantly reduces the risk of unauthorized account access from stolen credentials.",Cyber Security
+"Ransomware encrypts a victim's files and demands payment in exchange for the decryption key.",Cyber Security
+"Security information and event management systems aggregate logs to detect and respond to threats in real time.",Cyber Security
+"Cloud elasticity allows organizations to automatically scale compute resources up or down based on demand.",Cloud Computing
+"Infrastructure as code enables teams to provision and manage cloud resources using version-controlled configuration files.",Cloud Computing
+"Container orchestration platforms like Kubernetes automate the deployment and scaling of containerized applications.",Cloud Computing
+"A multi-cloud strategy distributes workloads across multiple cloud providers to avoid vendor lock-in.",Cloud Computing
+"Serverless computing lets developers run code without provisioning or managing the underlying servers.",Cloud Computing

@@ -1,0 +1,51 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ai-research-knowledge-assistant:latest
+    container_name: ai-research-assistant-api
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      # Override just the two values that must point at the Docker network /
+      # container paths regardless of what .env says on the host.
+      - CACHE_BACKEND=${CACHE_BACKEND:-memory}
+      - REDIS_URL=redis://redis:6379/0
+    volumes:
+      # Persistent SQLite database, uploaded PDFs, ChromaDB vector store, and
+      # extracted images/tables all live under ./data on the host.
+      - ./data:/app/data
+      # Trained TensorFlow classifier + vectorizer + label encoder.
+      - ./models:/app/models
+      # Hugging Face model cache (embedding model + reranker), so they are only
+      # downloaded once across container restarts/rebuilds.
+      - hf-model-cache:/app/.cache/huggingface
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    restart: unless-stopped
+    # No depends_on on `redis` here on purpose: the API works perfectly well
+    # without Redis (it falls back to the in-process memory cache at
+    # runtime), so there is no hard startup-ordering requirement even when
+    # CACHE_BACKEND=redis is set and the `redis` profile is enabled.
+
+  redis:
+    image: redis:7-alpine
+    container_name: ai-research-assistant-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    profiles:
+      - redis
+
+volumes:
+  hf-model-cache:
+  redis-data:

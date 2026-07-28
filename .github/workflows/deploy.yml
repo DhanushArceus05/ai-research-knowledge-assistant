@@ -1,0 +1,24 @@
+name: Deploy (manual)
+
+# This workflow is intentionally manual-only (workflow_dispatch) rather than
+# triggered automatically on push, since automatic deployment requires the
+# repository owner to configure a real deployment target and secrets first.
+# It deploys to Render via Render's deploy-hook URL, which must be stored as
+# the repository secret RENDER_DEPLOY_HOOK_URL (Render dashboard -> service
+# -> Settings -> Deploy Hook). No API keys or secrets are ever hard-coded
+# here or logged.
+on:
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render deploy hook
+        run: |
+          if [ -z "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" ]; then
+            echo "RENDER_DEPLOY_HOOK_URL secret is not configured. Set it in "
+            echo "Settings -> Secrets and variables -> Actions before running this workflow."
+            exit 1
+          fi
+          curl -fsSL -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
