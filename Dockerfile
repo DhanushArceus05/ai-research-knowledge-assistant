@@ -38,7 +38,7 @@ ENV TRANSFORMERS_CACHE=/app/.cache/huggingface
 
 EXPOSE 8000
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=5 \
     CMD curl -f http://localhost:${PORT:-8000}/health || exit 1
 
 # Shell form (not exec-form JSON array) so ${PORT:-8000} is expanded at
